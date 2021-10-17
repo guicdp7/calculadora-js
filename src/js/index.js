@@ -2,6 +2,21 @@
 
 function onInitApp() {
   var f$id = document.getElementById.bind(document);
+  
+  var f$calc = (a, operator, b) => {
+    var values = [Number(a), Number(b)];
+    
+    switch(operator) {
+      case '+': 
+        return values[0] + values[1];
+      case '-':
+        return values[0] - values[1];
+      case 'X': 
+        return values[0] * values[1];
+      case '/':
+        return values[0] / values[1];
+    }
+  }
 
   var $e = {
     btn0: f$id('btn0'),
@@ -21,10 +36,20 @@ function onInitApp() {
     btnIgual: f$id('btnIgual'),
     btnMais: f$id('btnMais'),
     formCalculadora: f$id('formCalculadora'),
-    inputVisor: f$id('inputVisor')
+    inputVisor: f$id('inputVisor'),
+    smallCalc: f$id('smallCalc')
   };
   
+  var firstCalc = '';
+  var lastOperator = '';
+  
   var $v = {
+    firstCalc: (value) => value ? firstCalc = value : firstCalc,
+    
+    lastOperator: (value) => value ? lastOperator = value : lastOperator,
+    
+    smallCalc: (value) => value ? $e.smallCalc.innerHTML = value : $e.smallCalc.innerHTML,
+    
     visor: (value) => value ? $e.inputVisor.value = value : $e.inputVisor.value
   };
   
@@ -39,6 +64,9 @@ function onInitApp() {
     $e.btn7.addEventListener('click', onNumberBtClick);
     $e.btn8.addEventListener('click', onNumberBtClick);
     $e.btn9.addEventListener('click', onNumberBtClick);
+    
+    $e.btnMais.addEventListener('click', onOperatorClick);
+    $e.btnMenos.addEventListener('click', onOperatorClick);
   }
   
   function onNumberBtClick(event) {
@@ -56,6 +84,29 @@ function onInitApp() {
     var result = $v.visor() + value;
     
     $v.visor(result);
+  }
+  
+  function onOperatorClick(event) {
+    var operator = event.target.value;
+    
+    if ($v.visor() === '' || $v.visor() === '0') {
+      if ($v.firstCalc() !== ''){
+        $v.smallCalc($v.smallCalc().replace($v.lastOperator(), operator));
+        $v.lastOperator(operator);
+      }
+      
+      return;
+    }
+    
+    if ($v.visor() !== '' && $v.visor() !== '0' && $v.lastOperator() !== '') {
+      $v.visor(f$calc($v.firstCalc(), $v.lastOperator(), $v.visor()));
+    }
+    
+    $v.lastOperator(operator);
+    $v.firstCalc($v.visor());
+    $v.visor('0');
+    $v.smallCalc($v.firstCalc() + ' ' + $v.lastOperator());
+    
   }
   
   onAppReady();
