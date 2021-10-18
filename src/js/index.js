@@ -49,7 +49,9 @@ function onInitApp() {
     btnMais: f$id('btnMais'),
     formCalculadora: f$id('formCalculadora'),
     inputVisor: f$id('inputVisor'),
-    smallCalc: f$id('smallCalc')
+    smallCalc: f$id('smallCalc'),
+    btnApagar: f$id('btnApagar'),
+    btnResetar: f$id('btnResetar')
   };
   
   var firstCalc = '0';
@@ -89,7 +91,28 @@ function onInitApp() {
     
     $e.btnIgual.addEventListener('click', onBtEqualClick);
     $e.btnPonto.addEventListener('click', onBtPointClick);
+    $e.btnApagar.addEventListener('click', onBtUndoClick);
+    $e.btnResetar.addEventListener('click', onBtResetClick);
     
+  }
+  
+  function onBtResetClick() {
+    $v.visor('0');
+    $v.lastOperator('=');
+    $v.firstCalc('0');
+    $v.smallCalc('');
+    $v.isResult(false);
+  }
+  
+  function onBtUndoClick() {
+    if ($v.visorRaw() !== '') {
+      if ($v.visorRaw().length === 1){
+        $v.visor('0');
+        return;
+      }
+      
+      $v.visor($v.visorRaw().substring(0, $v.visorRaw().length - 1));
+    }
   }
   
   function onNumberBtClick(event) {
@@ -126,12 +149,13 @@ function onInitApp() {
   }
   
   function onBtPointClick() {
-    if ($v.visor().indexOf('.') > -1) {
+    if ($v.visor().indexOf('.') > -1 && $v.isResult() === false) {
       return;
     }
     
-    if ($v.visor() === '') {
+    if ($v.visor() === '' || $v.isResult()) {
       $v.visor('0');
+      $v.isResult(false);
     }
     
     $v.visor($v.visor() + '.');
@@ -157,6 +181,7 @@ function onInitApp() {
     $v.firstCalc($v.visor());
     $v.visor('0');
     $v.smallCalc($v.firstCalc() + ' ' + $v.lastOperator());
+    $v.isResult(false);
     
   }
   

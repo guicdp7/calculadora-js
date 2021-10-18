@@ -17,7 +17,11 @@
     <h1>Calculadora</h1>
     <form id="formCalculadora">
       <small class="text-muted" id="smallCalc"></small>
-      <input class="form-control form-control-lg" name="visor" id="inputVisor" placeholder="Faça cálculos aqui..." readonly>
+      <div class="input-group">
+        <input class="form-control form-control-lg" name="visor" id="inputVisor" placeholder="Faça cálculos aqui..." readonly>
+        <input class="btn btn-secondary btn-lg no-css" type="button" value="<" id="btnApagar">
+        <input class="btn btn-secondary btn-lg no-css" type="button" value="x" id="btnResetar">
+      </div>
       <input type="button" class="btn btn-primary btn-lg" value="7" id="btn7">
       <input type="button" class="btn btn-primary btn-lg" value="8" id="btn8">
       <input type="button" class="btn btn-primary btn-lg" value="9" id="btn9">

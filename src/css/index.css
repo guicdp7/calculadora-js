@@ -1,4 +1,4 @@
-.btn {
+.btn:not(.no-css) {
   width: 80px;
   text-align: center;
   margin: 4px 2px;
