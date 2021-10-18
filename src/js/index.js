@@ -40,15 +40,18 @@ function onInitApp() {
     smallCalc: f$id('smallCalc')
   };
   
-  var firstCalc = '';
-  var lastOperator = '';
+  var firstCalc = '0';
+  var lastOperator = '=';
+  var isResult = false;
   
   var $v = {
     firstCalc: (value) => value ? firstCalc = value : firstCalc,
     
+    isResult: (value) => value || value === false ? isResult = value : isResult,
+    
     lastOperator: (value) => value ? lastOperator = value : lastOperator,
     
-    smallCalc: (value) => value ? $e.smallCalc.innerHTML = value : $e.smallCalc.innerHTML,
+    smallCalc: (value) => value || value === '' ? $e.smallCalc.innerHTML = value : $e.smallCalc.innerHTML,
     
     visor: (value) => value ? $e.inputVisor.value = value : $e.inputVisor.value
   };
@@ -67,6 +70,11 @@ function onInitApp() {
     
     $e.btnMais.addEventListener('click', onOperatorClick);
     $e.btnMenos.addEventListener('click', onOperatorClick);
+    $e.btnVezes.addEventListener('click', onOperatorClick);
+    $e.btnDividir.addEventListener('click', onOperatorClick);
+    
+    $e.btnIgual.addEventListener('click', onBtEqualClick);
+    
   }
   
   function onNumberBtClick(event) {
@@ -76,8 +84,9 @@ function onInitApp() {
       return;
     }
     
-    if (value !== '0' && $v.visor() === '0'){
+    if ((value !== '0' && $v.visor() === '0')  || $v.isResult()){
       $v.visor(value);
+      $v.isResult(false);
       return;
     }
     
@@ -86,11 +95,26 @@ function onInitApp() {
     $v.visor(result);
   }
   
+  function onBtEqualClick() {
+    if ($v.visor() !== '' && $v.visor() !== '0' && $v.lastOperator() !== '=') {
+      $v.visor(f$calc($v.firstCalc(), $v.lastOperator(), $v.visor()));
+    }
+    
+    if ($v.visor() === '' || $v.visor() === '0' && $v.lastOperator() !== '=') {
+      $v.visor($v.firstCalc());
+    }
+    
+    $v.lastOperator('=');
+    $v.firstCalc('0');
+    $v.smallCalc('');
+    $v.isResult(true);
+  }
+  
   function onOperatorClick(event) {
     var operator = event.target.value;
     
     if ($v.visor() === '' || $v.visor() === '0') {
-      if ($v.firstCalc() !== ''){
+      if ($v.firstCalc() !== '0'){
         $v.smallCalc($v.smallCalc().replace($v.lastOperator(), operator));
         $v.lastOperator(operator);
       }
@@ -98,7 +122,7 @@ function onInitApp() {
       return;
     }
     
-    if ($v.visor() !== '' && $v.visor() !== '0' && $v.lastOperator() !== '') {
+    if ($v.visor() !== '' && $v.visor() !== '0' && $v.lastOperator() !== '=') {
       $v.visor(f$calc($v.firstCalc(), $v.lastOperator(), $v.visor()));
     }
     
