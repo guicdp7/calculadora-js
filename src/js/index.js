@@ -17,6 +17,18 @@ function onInitApp() {
         return values[0] / values[1];
     }
   }
+  
+  var f$trim = (value) => {
+    var result = String(value).trim();
+    
+    var parts = result.split('.');
+    
+    if (parts[1] && parts[1].length) {
+      return result;
+    }
+    
+    return parts[0];
+  }
 
   var $e = {
     btn0: f$id('btn0'),
@@ -53,7 +65,9 @@ function onInitApp() {
     
     smallCalc: (value) => value || value === '' ? $e.smallCalc.innerHTML = value : $e.smallCalc.innerHTML,
     
-    visor: (value) => value ? $e.inputVisor.value = value : $e.inputVisor.value
+    visor: (value) => value ? $e.inputVisor.value = value : f$trim($e.inputVisor.value),
+    
+    visorRaw: (value) => value ? $e.inputVisor.value = value : $e.inputVisor.value
   };
   
   function onAppReady() {
@@ -74,23 +88,24 @@ function onInitApp() {
     $e.btnDividir.addEventListener('click', onOperatorClick);
     
     $e.btnIgual.addEventListener('click', onBtEqualClick);
+    $e.btnPonto.addEventListener('click', onBtPointClick);
     
   }
   
   function onNumberBtClick(event) {
     var value = event.target.value;
     
-    if (value === '0' && $v.visor() === '0'){
+    if (value === '0' && $v.visorRaw() === '0'){
       return;
     }
     
-    if ((value !== '0' && $v.visor() === '0')  || $v.isResult()){
+    if ((value !== '0' && $v.visorRaw() === '0')  || $v.isResult()){
       $v.visor(value);
       $v.isResult(false);
       return;
     }
     
-    var result = $v.visor() + value;
+    var result = $v.visorRaw() + value;
     
     $v.visor(result);
   }
@@ -108,6 +123,18 @@ function onInitApp() {
     $v.firstCalc('0');
     $v.smallCalc('');
     $v.isResult(true);
+  }
+  
+  function onBtPointClick() {
+    if ($v.visor().indexOf('.') > -1) {
+      return;
+    }
+    
+    if ($v.visor() === '') {
+      $v.visor('0');
+    }
+    
+    $v.visor($v.visor() + '.');
   }
   
   function onOperatorClick(event) {
